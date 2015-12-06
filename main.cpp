@@ -20,6 +20,15 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return elems;
 }
 
+void MostrarGramatica(std::vector<std::string> noTerminalesNumerados, std::map<std::string,std::vector<std::string> > produccionesNumeradas){
+for(int k=0; k<noTerminalesNumerados.size();k++){
+    std::vector<std::string> a =produccionesNumeradas.at(noTerminalesNumerados[k]);
+    for(int iV=0;iV<a.size();iV++){
+        cout<<"\n"<<noTerminalesNumerados[k]<<"->"<<a[iV];
+        }
+    }
+}
+
 Gramar enumerarNoTerminales(Gramar FNCH, vector<string> noTerminal,vector<string> terminal){
     cout<<"\n"<<"No terminales";
 
@@ -171,12 +180,19 @@ for(int k=0; k<noTerminalesNumerados.size();k++){
 
 }
 
-std::vector<std::string> reemplazarI= produccionesNumeradas.at("2");
-for(int i=0; i<reemplazarI.size();i++)
-    cout<<"\n"<<reemplazarI[i];
+//std::vector<std::string> reemplazarI= produccionesNumeradas.at("2");
+//for(int i=0; i<reemplazarI.size();i++)
+//    cout<<"\n"<<reemplazarI[i];
+cout<<"\n\n"<<"Final del paso 1.1 i>j";
+cout<<"\n"<<"Nueva gramatica";
+MostrarGramatica(noTerminalesNumerados, produccionesNumeradas);
+
+
 
 return Greibach;
 }
+
+
 
 int main()
 {   //EJEMPLO DE COMO USAR LA ESTRUCTURA
