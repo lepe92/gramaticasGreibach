@@ -4,6 +4,7 @@
 
 using namespace std;
 int contadorNoTerminales=0;
+
 //metodos para split de cadena
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
@@ -18,6 +19,35 @@ std::vector<std::string> split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, elems);
     return elems;
+}
+
+
+std::vector<int> inspeccionTerminales(std::vector<std::string> terminal,std::vector<std::string> noTerminalesNumerados, std::map<std::string,std::vector<std::string> > produccionesNumeradas){
+std::vector<int> comienzaTerminal;
+for(int k=0; k<noTerminalesNumerados.size();k++){
+    std::vector<std::string> a =produccionesNumeradas.at(noTerminalesNumerados[k]);
+    //pasar a entero la llave pare tener i
+    // pasar a entero el inicial de cada produccion para tener j
+    int comienzaEnteroTerminal=0;
+    for(int iV=0;iV<a.size();iV++){
+        std::vector<std::string> x = split(a[iV], '|');
+        //recorrer terminales en busca de x[0]
+        for(int i=0;i < terminal.size(); i++){
+            if(terminal[i]==x[0]+'|')
+                comienzaEnteroTerminal++;
+            }
+        }
+        //cout<<"\n"<<comienzaEnteroTerminal;
+        if(comienzaEnteroTerminal==a.size())
+            comienzaTerminal.push_back(1);
+        else{
+            comienzaTerminal.push_back(0);
+        }
+    }
+    for(int j=0; j<comienzaTerminal.size();j++){
+        cout<<"\n"<<comienzaTerminal[j];
+    }
+    return comienzaTerminal;
 }
 
 void MostrarGramatica(std::vector<std::string> noTerminalesNumerados, std::map<std::string,std::vector<std::string> > produccionesNumeradas){
@@ -244,7 +274,7 @@ for(int k=0; k<noTerminalesNumerados.size();k++){
 
             std::vector<std::string> reemplazarI2=reemplazarI;
             for(int indiceProduccion=0; indiceProduccion<reemplazarI.size();indiceProduccion++){
-                reemplazarI2.push_back(reemplazarI[indiceProduccion]+Result);
+                reemplazarI2.push_back(reemplazarI[indiceProduccion]+Result+'|');
             }
             a=reemplazarI2;
         }
@@ -256,6 +286,57 @@ for(int k=0; k<noTerminalesNumerados.size();k++){
 cout<<"\n\n"<<"Final del paso 1.2 i=j";
 cout<<"\n"<<"Nueva gramatica";
 MostrarGramatica(noTerminalesNumerados, produccionesNumeradas);
+
+bool faltaSustituir=true;
+while(faltaSustituir){
+std::vector<int>terminales= inspeccionTerminales(terminal,noTerminalesNumerados, produccionesNumeradas);
+for(int i=0; i<terminales.size();i++){
+    if(terminales[i]==1){
+        string key=noTerminalesNumerados[i];//el no terminal cuyas producciones comienzan con terminales
+
+        std::vector<std::string> b =produccionesNumeradas.at(key);
+
+        for(int j=0; j<noTerminalesNumerados.size();j++){
+                 std::vector<std::string> reemplazarI;
+            //if(noTerminalesNumerados[j]!=key){
+                std::vector<std::string> a =produccionesNumeradas.at(noTerminalesNumerados[j]);
+                for(int ia=0; ia<a.size();ia++){
+                    std::vector<std::string> x = split(a[ia], '|');
+                    if(x[0]==key){
+                        for(int ib=0; ib<b.size();ib++){
+                            string temp=b[ib];
+                            for(int ix=1; ix<x.size();ix++){
+                                temp+=x[ix]+'|';
+                            }
+                            reemplazarI.push_back(temp);
+                        }
+                    }
+                    else{
+                        string temp="";
+                        for(int ix=0; ix<x.size();ix++){
+                                temp+=x[ix]+'|';
+                            }
+                        reemplazarI.push_back(temp);
+                    }
+                }
+produccionesNumeradas[noTerminalesNumerados[j]]=reemplazarI;
+        }
+    }
+}
+int conta=0;
+for(int i=0; i<terminales.size();i++){
+    if(terminales[i]!=0){
+        conta++;
+    }
+}
+if(conta==terminales.size()){
+    faltaSustituir=false;
+}
+cout<<"\n";
+MostrarGramatica(noTerminalesNumerados, produccionesNumeradas);
+cout<<"\n";
+}
+
 
 return Greibach;
 }
