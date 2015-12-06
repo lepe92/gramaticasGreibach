@@ -148,80 +148,8 @@ cout << "\n\t" <<noTerminalesNumerados[m]<<"->"<< Greibach.getProduction(noTermi
 }
 produccionesNumeradas.insert(std::pair<std::string,std::vector<std::string> > (noTerminalesNumerados[m],produccioncitas));
 }
-
-//reflexiva
-cout<<"\n"<<"Comienza paso 1.2 i=j";
-
-for(int k=0; k<noTerminalesNumerados.size();k++){
-    std::vector<std::string> a =produccionesNumeradas.at(noTerminalesNumerados[k]);
-    //pasar a entero la llave pare tener i
-    // pasar a entero el inicial de cada produccion para tener j
-    int i=0;
-    stringstream convert(noTerminalesNumerados[k]);//object from the class stringstream
-    convert>>i;
-    //ya tenemos i, sigue obtener j
-    int j=0;
-    for(int iV=0;iV<a.size();iV++){
-        std::vector<std::string> x = split(a[iV], '|');
-       //si x[0] esta en los noterminalesnumerados
-       bool estaEnNoTerminales=false;
-       for(int nTI=0; nTI<noTerminalesNumerados.size();nTI++){
-            if(noTerminalesNumerados[nTI]==x[0])
-                estaEnNoTerminales=true;
-       }
-       if(estaEnNoTerminales){
-        stringstream convert(x[0]);//object fr1om the class stringstream
-        convert>>j;
-        //cout<<"\n"<<j;
-        if(i==j){
-            cout<<"\n"<<i<<"=="<<j;
-            std::vector<std::string> reemplazarI;
-            //anadimos a reemplazarI las producciones que no se afectaran
-            for(int iV2=0;iV2<iV;iV2++){
-                reemplazarI.push_back(a[iV2]);
-            }
-            for(int iV2=iV+1;iV2<a.size();iV2++){
-                reemplazarI.push_back(a[iV2]);
-            }
-            //anadimos un nuevo noTerminal
-            string Result;          // string which will contain the result
-            stringstream convert;   // stream used for the conversion
-            convert << contadorNoTerminales;      // insert the textual representation of 'Number' in the characters in the stream
-            Result = convert.str(); // set 'Result' to the contents of the stream
-            noTerminalesNumerados.push_back(Result);
-            contadorNoTerminales++;
-
-            std::vector<std::string> produccionesNuevoNoTerminal;
-
-            string temp="";
-               for(int iX=1;iX<x.size();iX++){
-                    temp+=x[iX]+'|';
-                }
-
-
-            produccionesNuevoNoTerminal.push_back(temp);
-            produccionesNuevoNoTerminal.push_back(temp+Result);
-
-            produccionesNumeradas.insert(std::pair<std::string,std::vector<std::string> > (Result,produccionesNuevoNoTerminal));
-            //lo del nuevo terminal ya fue anadido a producciones numeradas
-
-            std::vector<std::string> reemplazarI2=reemplazarI;
-            for(int indiceProduccion=0; indiceProduccion<reemplazarI.size();indiceProduccion++){
-                reemplazarI2.push_back(reemplazarI[indiceProduccion]+Result+'|');
-            }
-            a=reemplazarI2;
-        }
-       }
-    }//ya tenemos a reemplazada, falta sustituir en produccionesnumeradas
-    produccionesNumeradas[noTerminalesNumerados[k]]=a;
-}
-
-cout<<"\n\n"<<"Final del paso 1.2 i=j";
-cout<<"\n"<<"Nueva gramatica";
-MostrarGramatica(noTerminalesNumerados, produccionesNumeradas);
-
 //PASO 1
-cout<<"\n"<<"Paso 1 i < j";
+cout<<"\n"<<"Paso 1";
 //std::vector<std::string> a =produccionesNumeradas.at("0");
 //cout<<"\n"<<a[0];
 //sigue paso 1, recorrer todas las producciones y ver cuando i<=j para toda Ai y sus producciones
@@ -429,29 +357,25 @@ int main()
 
     nonTerminal.push_back("A");
         std::vector<string> auxA;// ESTAS SON LAS PRODUCCIONES DE A
-        auxA.push_back("a|");// LA NOTACION DE " | " ES PARA DISTINGUIR ENTRE SIMBOLOS COMO A_b (a sub b) y simbolos de A al momento de leer
+        auxA.push_back("B|S|");// LA NOTACION DE " | " ES PARA DISTINGUIR ENTRE SIMBOLOS COMO A_b (a sub b) y simbolos de A al momento de leer
+        auxA.push_back("b|");
         //auxA.push_back("S|B|");
     nonTerminal.push_back("B");
         std::vector<string> auxB;// ESTAS SON LAS PRODUCCIONES DE B
-        auxB.push_back("b|");
+        auxB.push_back("S|A|");
+        auxB.push_back("a|");
         //auxB.push_back("A|S|");
-nonTerminal.push_back("C");
-        std::vector<string> auxC;// ESTAS SON LAS PRODUCCIONES DE B
-        auxC.push_back("S|B|");
 
     //instancia de la gramatica
     Gramar G;
     G.defineInitial("S");// EL SIMBOLO POR DEFAULT ES S PERO LO AGREGO AQUI PARA DAR UN EJEMPLO DE COMO FUNCIONA ESTA FUNCION
         std::vector<string> auxS;// ESTAS SON LAS PRODUCCIONES DE
         auxS.push_back("A|B|");
-        auxS.push_back("A|C|");
-        auxS.push_back("S|S|");
          //auxS.push_back("S|B|");
 
     G.insertNonTerminal(G.initial,std::vector<std::string>()); // EN ESTE PASO SE INSERTA UN NO TERMINAL, AGREGO "S" Y  UN VECTOR VACIO
     G.insertNonTerminal("A",auxA); //SE INSERTA UN NO TERMINAL Y SE LE ENVIA SUS PRODUCCIONES DIRECTAMENTE
     G.insertNonTerminal("B",auxB);
-    G.insertNonTerminal("C",auxC);
     G.symbols["S"].productions=auxS;//ASIGNO AQUI A S LAS PRODUCCIONES QUE LE CORRESPONDE
 
     G.state=0;//EMPTY, LEASE ESTADOS EN LA CLASE GRAMAR
