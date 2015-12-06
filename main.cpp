@@ -187,7 +187,75 @@ cout<<"\n\n"<<"Final del paso 1.1 i>j";
 cout<<"\n"<<"Nueva gramatica";
 MostrarGramatica(noTerminalesNumerados, produccionesNumeradas);
 
+cout<<"\n"<<"Comienza paso 1.2 i=j";
 
+for(int k=0; k<noTerminalesNumerados.size();k++){
+    std::vector<std::string> a =produccionesNumeradas.at(noTerminalesNumerados[k]);
+    //pasar a entero la llave pare tener i
+    // pasar a entero el inicial de cada produccion para tener j
+    int i=0;
+    stringstream convert(noTerminalesNumerados[k]);//object from the class stringstream
+    convert>>i;
+    //ya tenemos i, sigue obtener j
+    int j=0;
+    for(int iV=0;iV<a.size();iV++){
+        std::vector<std::string> x = split(a[iV], '|');
+       //si x[0] esta en los noterminalesnumerados
+       bool estaEnNoTerminales=false;
+       for(int nTI=0; nTI<noTerminalesNumerados.size();nTI++){
+            if(noTerminalesNumerados[nTI]==x[0])
+                estaEnNoTerminales=true;
+       }
+       if(estaEnNoTerminales){
+        stringstream convert(x[0]);//object fr1om the class stringstream
+        convert>>j;
+        //cout<<"\n"<<j;
+        if(i==j){
+            cout<<"\n"<<i<<"=="<<j;
+            std::vector<std::string> reemplazarI;
+            //anadimos a reemplazarI las producciones que no se afectaran
+            for(int iV2=0;iV2<iV;iV2++){
+                reemplazarI.push_back(a[iV2]);
+            }
+            for(int iV2=iV+1;iV2<a.size();iV2++){
+                reemplazarI.push_back(a[iV2]);
+            }
+            //anadimos un nuevo noTerminal
+            string Result;          // string which will contain the result
+            stringstream convert;   // stream used for the conversion
+            convert << contadorNoTerminales;      // insert the textual representation of 'Number' in the characters in the stream
+            Result = convert.str(); // set 'Result' to the contents of the stream
+            noTerminalesNumerados.push_back(Result);
+            contadorNoTerminales++;
+
+            std::vector<std::string> produccionesNuevoNoTerminal;
+
+            string temp="";
+               for(int iX=1;iX<x.size();iX++){
+                    temp+=x[iX]+'|';
+                }
+
+
+            produccionesNuevoNoTerminal.push_back(temp);
+            produccionesNuevoNoTerminal.push_back(temp+Result);
+
+            produccionesNumeradas.insert(std::pair<std::string,std::vector<std::string> > (Result,produccionesNuevoNoTerminal));
+            //lo del nuevo terminal ya fue anadido a producciones numeradas
+
+            std::vector<std::string> reemplazarI2=reemplazarI;
+            for(int indiceProduccion=0; indiceProduccion<reemplazarI.size();indiceProduccion++){
+                reemplazarI2.push_back(reemplazarI[indiceProduccion]+Result);
+            }
+            a=reemplazarI2;
+        }
+       }
+    }//ya tenemos a reemplazada, falta sustituir en produccionesnumeradas
+    produccionesNumeradas[noTerminalesNumerados[k]]=a;
+}
+
+cout<<"\n\n"<<"Final del paso 1.2 i=j";
+cout<<"\n"<<"Nueva gramatica";
+MostrarGramatica(noTerminalesNumerados, produccionesNumeradas);
 
 return Greibach;
 }
