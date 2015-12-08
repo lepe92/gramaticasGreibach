@@ -456,7 +456,7 @@ nonTerminal.push_back("C");
 
     G.state=0;//EMPTY, LEASE ESTADOS EN LA CLASE GRAMAR
 
-
+//
     int i;
     for(i=0;i<terminal.size();i++){ //EJEMPLO DE COMO INSERTAR ITERATIVAMENTE
         G.insertTerminal(terminal[i]);
