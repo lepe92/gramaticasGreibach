@@ -409,8 +409,37 @@ MostrarGramatica(noTerminalesNumerados, produccionesNumeradas);
 cout<<"\n";
 }
 
+//pasar a nueva gramatica
+ Gramar G2;
+    G2.defineInitial(noTerminalesNumerados[0]);// EL SIMBOLO POR DEFAULT ES S PERO LO AGREGO AQUI PARA DAR UN EJEMPLO DE COMO FUNCIONA ESTA FUNCION
 
-return Greibach;
+         //auxS.push_back("S|B|");
+         for(int i=0; i<noTerminalesNumerados.size();i++){
+std::vector<std::string> a =produccionesNumeradas.at(noTerminalesNumerados[i]);
+std::vector<string> auxS;// ESTAS SON LAS PRODUCCIONES DE
+                for(int ia=0; ia<a.size();ia++){
+                        auxS.push_back(a[ia]);
+                }
+                G2.insertNonTerminal(noTerminalesNumerados[i],auxS);
+         }
+G2.state=0;
+
+    for(int i=0;i<terminal.size();i++){ //EJEMPLO DE COMO INSERTAR ITERATIVAMENTE
+        G2.insertTerminal(terminal[i]);
+    }
+
+cout<<"\n"<<"Gramatica FNG";
+  std::vector<std::string> stringsOfGramar2;
+    stringsOfGramar2= G2.getStringsOfGramar();
+    //int i;
+        for(int i=0;i<stringsOfGramar2.size();i++){
+            cout <<"\n" << stringsOfGramar2[i];
+        }
+cout<<"\n";
+
+
+
+return G2;
 }
 
 
